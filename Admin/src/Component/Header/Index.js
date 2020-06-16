@@ -4,13 +4,16 @@ import {faBell,faSignOutAlt,faArrowLeft} from '@fortawesome/free-solid-svg-icons
 import {Link} from 'react-router-dom'
 import {checkLogin} from '../../GlobalFunction/Function'
 import { container,btnLogout } from './Component/Style'
+import axios from 'axios'
 
 const Index = ({props,notification}) => {
     const [name,setName] = useState('');
+    const [token,setToken] = useState('');
 
     useEffect(() => {
         checkLogin().then(res => {
-            setName(res.name);
+            setName(res.user.name);
+            setToken(res.token);
         })
         return () => {
             
@@ -18,8 +21,18 @@ const Index = ({props,notification}) => {
     }, []);
 
     const handleLogout = () => {
-        localStorage.removeItem('user');
-        props.history.push('/login');
+        axios({
+            method : 'POST',
+            url : 'http://localhost:5000/user/logout',
+            headers: { Authorization : `Bearer ${token}` }
+        })
+        .then(response => {
+            localStorage.removeItem('user');
+            props.history.push('/login');
+        })
+        .catch(error => {
+            console.log(error)
+        })
     }
 
     return (

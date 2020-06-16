@@ -17,12 +17,13 @@ const Index = (props) => {
     useEffect(() => {
       const source = axios.CancelToken.source();
         checkLogin().then(res => {
+          console.log(res)
           const loadData = async () => {
-            const response = await axios.get(`http://localhost:5000/todo/show_todo/not_complete/${res._id}`,{cancelToken : source.token});
-            const response_notification = await axios.get(`http://localhost:5000/todo/show_todo/complete/${res._id}`,{cancelToken : source.token});
+            const response = await axios.get(`http://localhost:5000/todo/show_todo/not_complete/${res.user._id}`,{cancelToken : source.token});
+            const response_notification = await axios.get(`http://localhost:5000/todo/show_todo/complete/${res.user._id}`,{cancelToken : source.token});
             dispatch({type : 'TODO_LIST',data : response.data});
             dispatch({type : 'NOTIFICATION_LIST',data : response_notification.data});
-            setUser(res);
+            setUser(res.user);
           }
           loadData();
         }).catch(() => {
